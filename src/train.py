@@ -17,7 +17,7 @@ import random
 # konfigurer parametere
 data_dir = "data/processed"  #formaterte dataene modellen skal trenes med ligger her
 batch_size = 32  #i ett treningssteg skal det behandles en batch på 32 
-num_epochs = 3 #antall ganger du trener over hele datasettet
+num_epochs = 6 #antall ganger du trener over hele datasettet
 learning_rate = 0.0001 #hvor raskt modellen lærer
 model_path = "model.path" #hvor modellen lagres
 
@@ -42,7 +42,7 @@ transform = transforms.Compose([
 
 
 train_dataset = datasets.ImageFolder(os.path.join(data_dir, "train"), transform = transform )
-subset_ratio = 0.2  # 20% av treningsdata
+subset_ratio = 0.3  # 30% av treningsdata
 train_dataset.samples = random.sample(train_dataset.samples, int(len(train_dataset.samples) * subset_ratio))
 
 
@@ -140,10 +140,10 @@ with torch.no_grad():
 
 # === Evaluering ===
 test_acc = np.mean(np.array(y_true) == np.array(y_pred))
-print(f"🎯 Test Accuracy: {test_acc*100:.2f}%")
+print(f"Test Accuracy: {test_acc*100:.2f}%")
 
 # Klassifikasjonsrapport
-print("\n🧩 Classification Report:")
+print("\n Classification Report:")
 print(classification_report(y_true, y_pred, target_names=class_names))
 
 # Confusion matrix
