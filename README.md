@@ -29,8 +29,6 @@ Prosjektet demonstrerer:
 - [Modellarkitektur](#-modellarkitektur)
 - [Resultater](#-resultater)
 - [Webapplikasjon](#-webapplikasjon)
-- [Mappe-struktur](#-mappe-struktur)
-- [Videre arbeid](#-videre-arbeid)
 - [Forfattere](#-forfattere)
 
 ---
@@ -54,8 +52,7 @@ data/processed/train/
 data/processed/val/
 data/processed/test/
 
-yaml
-Kopier kode
+
 
 ---
 
@@ -116,3 +113,10 @@ Brukeren kan:
 ✅ få sanntidsprediksjon
 ✅ se sannsynligheter
 ✅ motta visuelt feedback (ballonger/warnings)
+
+
+👩‍🦰👱‍♀️👩Forfattere
+
+- Sarah S. Ahsan
+- Amna Zafar
+- Mannat Gabria
