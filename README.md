@@ -1,149 +1,118 @@
-🧠 AI vs. Real Image Classifier
+# 🧠 AI vs. Real Image Classifier
 
-Et maskinlæringsprosjekt som klassifiserer ansiktsbilder som enten AI-genererte eller ekte ved hjelp av et nevralt nettverk. Modellen trenes med transfer learning (ResNet18) og gjøres tilgjengelig via en interaktiv webapplikasjon i Streamlit.
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.0-red.svg)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-brightgreen.svg)
+![Accuracy](https://img.shields.io/badge/Accuracy-69.58%25-orange.svg)
+![Status](https://img.shields.io/badge/Status-Completed-success.svg)
 
-📌 Innhold
+---
 
-Introduksjon
+## 💡 Introduksjon
 
-Datasett
-
-Metode
-
-Modellarkitektur
-
-Installasjon
-
-Kjøring
-
-Resultater
-
-Webapplikasjon
-
-Mappe-struktur
-
-Videre arbeid
-
-Forfattere
-
-🚀 Introduksjon
-
-Formålet med prosjektet er å undersøke om det er mulig å skille AI-genererte ansikter fra ekte bilder.
-Dette er en relevant problemstilling med økende spredning av deepfakes, generative modeller og manipulerte bilder.
+Dette prosjektet undersøker om det er mulig å skille **AI-genererte** ansikter fra **ekte** bilder ved hjelp av maskinlæring.  
+Modellen trenes med *transfer learning* (ResNet18) og gjøres tilgjengelig i en interaktiv Streamlit-webapp.
 
 Prosjektet demonstrerer:
 
-✅ maskinlæringens komplette livssyklus
-✅ databehandling og preprocessing
-✅ trening og evaluering
-✅ deploy i en webapplikasjon
+✅ maskinlæringens komplette livssyklus  
+✅ databehandling og preprocessing  
+✅ trening og evaluering  
+✅ deployment i webapplikasjon  
 
-📂 Datasett
+---
+
+## 📌 Innhold
+
+- [Datasett](#-datasett)
+- [Metode](#-metode)
+- [Modellarkitektur](#-modellarkitektur)
+- [Resultater](#-resultater)
+- [Webapplikasjon](#-webapplikasjon)
+- [Mappe-struktur](#-mappe-struktur)
+- [Videre arbeid](#-videre-arbeid)
+- [Forfattere](#-forfattere)
+
+---
+
+## 📂 Datasett
 
 Datasettet består av to kategorier:
 
-real – ekte ansiktsbilder
+- 🟣 `ai` – AI-genererte ansikter
+- 🟩 `real` – ekte ansiktsbilder
 
-ai – AI-genererte ansikter
+Fordeling:
 
-Datasettet ble delt i:
+- 70 % — trening  
+- 15 % — validering  
+- 15 % — testing  
 
-70 % trening
-
-15 % validering
-
-15 % testing
-
-Data ble lagret i:
+Datasettet ble prosessert slik:
 
 data/processed/train/
 data/processed/val/
 data/processed/test/
 
-⚙️ Metode
+yaml
+Kopier kode
 
-Transfer learning med ResNet18
+---
 
-Fine-tuning på siste lag
+## ⚙️ Metode
 
-Normalisering og resize med torchvision transforms
+Teknologier og teknikker brukt:
 
-CrossEntropyLoss
+- Transfer learning via **ResNet18**
+- Fine-tuning på siste lag
+- Normalize + resize med torchvision transforms
+- **CrossEntropyLoss** som tapsfunksjon
+- **Adam** optimizer
 
-Adam Optimizer
+Modellen ble trent i **6 epoker** på ca. **40 %** av datasetet for å redusere treningstiden.
 
-Modellen ble trent i 6 epoker på ca. 40 % av treningssettet for å redusere treningstid.
+---
 
-🧬 Modellarkitektur
+## 🧬 Modellarkitektur
 
-Tilpasset ResNet18:
+ResNet18 ble tilpasset med nytt klassifiseringslag:
 
+```python
 model.fc = nn.Sequential(
     nn.Linear(num_features, 256),
     nn.ReLU(),
     nn.Dropout(0.3),
     nn.Softmax(dim=1)
 )
+Kun siste lag ble trent videre (fine-tuning).
+
 📊 Resultater
+Endelig testaccuracy:
 
-Etter trening oppnådde modellen:
+✅ 69.58 %
 
-Test accuracy: 69.58 %
-
-Klassifikasjonsrapport viste balansert F1-score:
+Klassifikasjonsrapporten viste balanserte resultater:
 
 Klasse	F1-score
 AI	0.70
 Real	0.69
-🔷 Confusion Matrix
 
-Modellen feiltolker oftere ekte bilder som AI, sannsynligvis fordi moderne filtre gir glattere teksturer som ligner AI-genererte ansikter.
+🔷 Confusion Matrix
+Modellen feiltolker oftere ekte bilder som AI.
+Dette kan skyldes filtre og moderne etterbehandling som gir glatte, AI-lignende teksturer.
+
+🧐 Observasjoner
+Modellen er generelt stabil
+
+Ingen tydelig overfitting
+
+Feil skjer oftest på ekte bilder med “kunstige” trekk
 
 🌐 Webapplikasjon
-
-Webappen er laget i Streamlit.
+Webappen er laget med Streamlit.
 Brukeren kan:
 
 ✅ laste opp bilder
 ✅ få sanntidsprediksjon
 ✅ se sannsynligheter
-✅ motta visual feeback (ballonger/warning)
-
-Kun det siste laget ble trent videre (fine-tuning).
-
-
-
-📁 Mappe-struktur
-ML_project/
-│─ data/
-│   └─ processed/
-│─ src/
-│   ├─ train.py
-│   ├─ predict.py
-│   └─ prepare_data.py
-│─ webapp/
-│   └─ app.py
-│─ notebooks/
-│─ model.pth
-│─ requirements.txt
-│─ README.md
-
-
-Observasjoner
-
-- Modellen er generelt stabil
-
-- Ingen tydelig overfitting
-
-- Ekte bilder med filtre misklassifiseres oftere
-
-Forfattere
-
-Sarah S. Ahsan
-
-Amna Zafar
-
-Mannat Gabria
-
-DAT158 — Maskinlæring prosjekt
-Høgskulen på Vestlandet (HVL)
+✅ motta visuelt feedback (ballonger/warnings)
