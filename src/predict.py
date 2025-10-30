@@ -4,72 +4,72 @@ from torchvision import models, transforms
 from PIL import Image
 import sys
 
-# === Device configuration ===
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# === Device konfigurasjon ===
+device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 print(f" Using device: {device} ")
 
-# === Same transforms as in train.py ===
+# === Samme bildetransformasjoner som i train.py ===
+# Alt inni listen gjøres i rekkefølge:
+# 1. Skalerer bildet
+# 2. Konverterer til PyTorch tensor
+# 3. Normaliserer fargekanaler
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),  
-    transforms.ToTensor(),  
-    transforms.Normalize([0.485, 0.56, 0.406],  
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.56, 0.406],
                          [0.229, 0.224, 0.225])
 ])
 
-# === Class names must match training ===
-class_names = ["ai", "real"]  
-# ⚠ NOTE: If train order was ["real", "ai"]
-# then swap order above. Check print from train.py output.
+# === Klassene må være i samme rekkefølge som under trening ===
+class_names = ["ai", "real"]
+# Hvis train.py printet: ['real', 'ai'], bytt rekkefølge her!
 
-# === Build the same ResNet model structure ===
+# === Last samme modellstruktur som ble trent ===
 model = models.resnet18(pretrained=True)
 
-# Freeze all feature extractor layers
+# Fryser alle lag (feature extraction)
 for param in model.parameters():
     param.requires_grad = False
 
-# Replace final fully connected layer — MUST match train.py
+# Bytter ut det siste laget for klassifisering (samme som i train.py)
 num_features = model.fc.in_features
 model.fc = nn.Sequential(
     nn.Linear(num_features, 256),
     nn.ReLU(),
     nn.Dropout(0.3),
-    nn.Softmax(dim=1)
+    nn.Softmax(dim=1)  # gir sannsynligheter for hver klasse
 )
 
-# Load trained weights into model
+# Laster inn lagrede vekter fra model.pth (beste modellen)
 model.load_state_dict(torch.load("model.pth", map_location=device))
 model.to(device)
-model.eval()  # Set model to evaluation mode
+model.eval()  # setter modellen i evalueringsmodus (ingen trening)
 
-# ================= Prediction Function ================= #
+# === Funksjon for å gjøre prediksjon på et bilde ===
 def predict_image(img_path):
-    """Loads an image → applies transform → model prediction → returns class name"""
-
-    # Load image using Pillow
+    # Åpner bildet og konverterer til RGB (3 kanaler)
     image = Image.open(img_path).convert("RGB")
 
-    # Apply same preprocessing as training
-    img_tensor = transform(image).unsqueeze(0)  # Add batch dimension [1,3,224,224]
+    # Utfører transformasjoner og legger til batch-dimensjon (1 bilde)
+    img_tensor = transform(image).unsqueeze(0)
     img_tensor = img_tensor.to(device)
 
-    # Disable gradient tracking
-    with torch.no_grad():
+    with torch.no_grad():  # skrur av gradienter for raskere utførelse
         output = model(img_tensor)
-        _, predicted = torch.max(output, 1)  # index of highest probability
+        _, predicted = torch.max(output, 1)  # velger klassen med høyest sannsynlighet
 
     predicted_class = class_names[predicted.item()]
-    confidence = torch.max(output).item() * 100
+    confidence = torch.max(output).item() * 100  # konfidens i prosent
 
     return predicted_class, confidence
 
 
-# Run prediction from terminal
+# === Kjøre skriptet fra terminal ===
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python predict.py <image_path>")
+        print("Bruk: python predict.py <bildefil>")
         sys.exit()
 
     img_path = sys.argv[1]
     label, conf = predict_image(img_path)
-    print(f"Prediction: {label} ({conf:.2f} %)")
+    print(f"Prediksjon: {label} ({conf:.2f} % sikkerhet)")
