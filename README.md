@@ -21,6 +21,8 @@ Prosjektet demonstrerer:
 ✅ deployment i webapplikasjon  
 
 ---
+### 🎥 Demonstrasjon av appen
+![App Demo](media/app_demo.gif)
 
 ## 📌 Innhold
 
