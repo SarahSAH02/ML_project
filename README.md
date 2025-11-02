@@ -22,7 +22,7 @@ Prosjektet demonstrerer:
 
 ---
 ### 🎥 Demonstrasjon av appen
-![App Demo](media/app_demo.gif)
+![App Demo](media/REC-20251102222028-ezgif.com-video-to-gif-converter.gif)
 
 ## 📌 Innhold
 
